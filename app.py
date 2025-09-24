@@ -1,19 +1,26 @@
-from fastapi import FastAPI, Request
-from fastapi.responses import StreamingResponse
+from fastapi import FastAPI
+from fastapi.responses import StreamingResponse, JSONResponse
 from datetime import datetime, timezone
 from io import BytesIO
 
 app = FastAPI()
+open_events = []  # In-memory log
 
 @app.get("/")
 def read_root():
     return {"message": "FastAPI is running on Vercel!"}
-
+    
 @app.get("/email_image")
 async def email_image(user_id: str, offer_id: str = "unknown"):
-    # Simulate DB update
-    print(f"Email opened by {user_id} for offer {offer_id} at {datetime.now(timezone.utc)}")
+    open_events.append({
+        "user_id": user_id,
+        "offer_id": offer_id,
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    })
 
-    # Serve a visible image
     image_bytes = open("banner.png", "rb").read()
     return StreamingResponse(BytesIO(image_bytes), media_type="image/png")
+
+@app.get("/get_open_events")
+async def get_open_events():
+    return JSONResponse(content=open_events)
