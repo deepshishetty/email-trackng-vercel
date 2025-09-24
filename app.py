@@ -1,14 +1,15 @@
-from flask import Flask, request, send_file
-from io import BytesIO
+from fastapi import FastAPI, Request
+from fastapi.responses import StreamingResponse
 from datetime import datetime, timezone
+from io import BytesIO
 
-app=Flask(__name__)
+app = FastAPI()
 
-@app.route('email_image')
-def email_image():
-    user_id=request.args.get('user_id')
-    offer_id=request.args.get('offer_id','unknown'
-    
-    print(f"Email opened by {user_id} fr offer {offer_id} at {datetime.now(timezone.utc)}"))
-    return send_file("banner.png",mimetype="image/png")
-    
+@app.get("/email_image")
+async def email_image(user_id: str, offer_id: str = "unknown"):
+    # Simulate DB update
+    print(f"Email opened by {user_id} for offer {offer_id} at {datetime.now(timezone.utc)}")
+
+    # Serve a visible image
+    image_bytes = open("banner.png", "rb").read()
+    return StreamingResponse(BytesIO(image_bytes), media_type="image/png")
