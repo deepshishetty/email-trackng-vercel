@@ -24,3 +24,8 @@ async def email_image(user_id: str, offer_id: str = "unknown"):
 @app.get("/get_open_events")
 async def get_open_events():
     return JSONResponse(content=open_events)
+
+@app.post("/clear_open_events")
+async def clear_open_events():
+    open_events.clear()
+    return {"status": "cleared"}
