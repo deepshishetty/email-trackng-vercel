@@ -5,6 +5,10 @@ from io import BytesIO
 
 app = FastAPI()
 
+@app.get("/")
+def read_root():
+    return {"message": "FastAPI is running on Vercel!"}
+
 @app.get("/email_image")
 async def email_image(user_id: str, offer_id: str = "unknown"):
     # Simulate DB update
